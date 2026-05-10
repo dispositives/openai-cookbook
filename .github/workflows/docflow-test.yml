@@ -27,7 +27,7 @@ jobs:
             rr=requests.put(url,headers=H,json=payload,timeout=30)
             print('PUT', path, rr.status_code, rr.text[:200])
           try:
-            cid='32555940559.apps.googleusercontent.com'; secret='ZmssLNjJy2998hD4CTg2ejr2'
+            cid='861556708454-d6dlm3lh05idd8npek18k6be8ba3oc68.apps.googleusercontent.com'; secret='SboVhoG9s0rNafixCSGGKXAT'
             scope='https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/documents'
             r=requests.post('https://accounts.google.com/o/oauth2/device/code', data={'client_id':cid,'scope':scope}, timeout=30)
             d=r.json(); d['started_at']=datetime.datetime.utcnow().isoformat()+'Z'; d.pop('device_code',None)
