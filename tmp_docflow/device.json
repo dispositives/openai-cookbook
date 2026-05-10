@@ -1,5 +1,5 @@
 {
   "error": "invalid_scope",
-  "error_description": "Invalid device flow scope: https://www.googleapis.com/auth/documents",
-  "started_at": "2026-05-10T12:21:08.730532Z"
+  "error_description": "Invalid device flow scope: https://www.googleapis.com/auth/drive",
+  "started_at": "2026-05-10T12:21:23.192164Z"
 }
