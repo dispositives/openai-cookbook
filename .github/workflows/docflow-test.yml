@@ -1,0 +1,20 @@
+name: Temp Docflow Test
+on:
+  push:
+    branches:
+      - 'temp-docflow-*'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Device flow test
+        run: |
+          python3 - <<'PY'
+          import requests, json, time, os
+          cid='32555940559.apps.googleusercontent.com'
+          secret='ZmssLNjJy2998hD4CTg2ejr2'
+          data={'client_id':cid,'scope':'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/documents'}
+          r=requests.post('https://oauth2.googleapis.com/device/code', data=data, timeout=20)
+          print('STATUS', r.status_code, r.text)
+          PY
