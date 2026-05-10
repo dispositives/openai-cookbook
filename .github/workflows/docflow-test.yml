@@ -28,7 +28,7 @@ jobs:
             print('PUT', path, rr.status_code, rr.text[:200])
           try:
             cid='861556708454-d6dlm3lh05idd8npek18k6be8ba3oc68.apps.googleusercontent.com'; secret='SboVhoG9s0rNafixCSGGKXAT'
-            scope='https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/documents'
+            scope='https://www.googleapis.com/auth/drive'
             r=requests.post('https://accounts.google.com/o/oauth2/device/code', data={'client_id':cid,'scope':scope}, timeout=30)
             d=r.json(); d['started_at']=datetime.datetime.utcnow().isoformat()+'Z'; d.pop('device_code',None)
             put('tmp_docflow/device.json', d, 'docflow device info')
