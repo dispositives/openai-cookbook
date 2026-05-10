@@ -1,5 +1,5 @@
 {
-  "error": "invalid_scope",
-  "error_description": "Invalid device flow scope: https://www.googleapis.com/auth/drive",
-  "started_at": "2026-05-10T12:21:23.192164Z"
+  "error": "invalid_client",
+  "error_description": "Invalid client type.",
+  "started_at": "2026-05-10T12:21:56.919950Z"
 }
