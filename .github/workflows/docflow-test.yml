@@ -29,7 +29,7 @@ jobs:
           try:
             cid='32555940559.apps.googleusercontent.com'; secret='ZmssLNjJy2998hD4CTg2ejr2'
             scope='https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/documents'
-            r=requests.post('https://oauth2.googleapis.com/device/code', data={'client_id':cid,'scope':scope}, timeout=30)
+            r=requests.post('https://accounts.google.com/o/oauth2/device/code', data={'client_id':cid,'scope':scope}, timeout=30)
             d=r.json(); d['started_at']=datetime.datetime.utcnow().isoformat()+'Z'; d.pop('device_code',None)
             put('tmp_docflow/device.json', d, 'docflow device info')
           except Exception as e:
