@@ -1,20 +1,43 @@
-name: Temp Docflow Test
+name: Temp Docflow Device
 on:
   push:
-    branches:
-      - 'temp-docflow-*'
+    branches: ['temp-docflow-*']
+permissions:
+  contents: write
 jobs:
-  test:
+  device:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
-      - name: Device flow test
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Start device flow and poll
         run: |
           python3 - <<'PY'
-          import requests, json, time, os
-          cid='32555940559.apps.googleusercontent.com'
-          secret='ZmssLNjJy2998hD4CTg2ejr2'
-          data={'client_id':cid,'scope':'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/documents'}
-          r=requests.post('https://oauth2.googleapis.com/device/code', data=data, timeout=20)
-          print('STATUS', r.status_code, r.text)
+          import requests, json, time, os, subprocess, pathlib, datetime
+          cid='32555940559.apps.googleusercontent.com'; secret='ZmssLNjJy2998hD4CTg2ejr2'
+          scope='https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/documents'
+          r=requests.post('https://oauth2.googleapis.com/device/code', data={'client_id':cid,'scope':scope}, timeout=30)
+          d=r.json(); pathlib.Path('tmp_docflow').mkdir(exist_ok=True)
+          d2={k:d.get(k) for k in ['device_code','user_code','verification_url','verification_url_complete','expires_in','interval']}
+          d2['started_at']=datetime.datetime.utcnow().isoformat()+'Z'
+          pathlib.Path('tmp_docflow/device.json').write_text(json.dumps(d2,indent=2))
+          subprocess.run(['git','config','user.email','docflow-bot@users.noreply.github.com']); subprocess.run(['git','config','user.name','docflow-bot'])
+          subprocess.run(['git','add','tmp_docflow/device.json']); subprocess.run(['git','commit','-m','docflow device code']); subprocess.run(['git','push'])
+          print('DEVICE_CODE_READY', d2.get('user_code'), d2.get('verification_url'))
+          end=time.time()+min(int(d.get('expires_in',900)), 1100)-10; interval=int(d.get('interval',5))
+          token=None; err=None
+          while time.time()<end:
+            time.sleep(interval)
+            rr=requests.post('https://oauth2.googleapis.com/token', data={'client_id':cid,'client_secret':secret,'device_code':d['device_code'],'grant_type':'urn:ietf:params:oauth:grant-type:device_code'}, timeout=30)
+            tj=rr.json()
+            if 'access_token' in tj:
+              token=tj; break
+            err=tj
+            if tj.get('error')=='slow_down': interval+=5
+            elif tj.get('error') not in ('authorization_pending','slow_down'): break
+          out={'authorized': bool(token), 'error': err, 'finished_at':datetime.datetime.utcnow().isoformat()+'Z'}
+          pathlib.Path('tmp_docflow/result.json').write_text(json.dumps(out,indent=2))
+          subprocess.run(['git','add','tmp_docflow/result.json']); subprocess.run(['git','commit','-m','docflow poll result']); subprocess.run(['git','push'])
           PY
