@@ -2,8 +2,6 @@ name: Temp Docflow Device
 on:
   push:
     branches: ['temp-docflow-*']
-permissions:
-  contents: write
 jobs:
   device:
     runs-on: ubuntu-latest
